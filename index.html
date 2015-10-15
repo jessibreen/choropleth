@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8 />
+    <title>Choropleth Template</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+    <script src="http://maps.stamen.com/js/tile.stamen.js"></script> 
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            font-family: Lato, sans-serif;
+            color: '#4C4C33';
+        }
+        header {
+            padding: 6px 10%;
+        }
+        h1 {
+            position: absolute;
+            z-index: 100;
+            top: 10px;
+            left: 60px;
+            padding: 8px 15px;
+            margin: 0;
+            color: whitesmoke;
+            font-size: 1.3em;
+            background: rgba(25,25,25,0.8);
+            border-radius: 0; 
+            font-weight: normal;
+        }
+        .leaflet-popup-content-wrapper {
+            opacity: 0.9;
+            border-radius: 5px;
+        }
+        #map {            
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+        }
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+}
+    </style>
+</head>
+
+<body>
+    <header>
+
+        <h1>Template DRAFT</h1>
+        
+    </header>
+
+    <div id='map'></div>
+    
+    </div>
+    
+
+    <script type="text/javascript" src = "tracts2010housing.js"></script>
+    
+    
+    <script>
+        var map = L.map('map', {
+            center: [38.0147,-84.483],
+            zoom: 11,
+            //minZoom: 10,
+            //maxZoom: 26,
+            zoomControl: true,
+            dragging: true,
+        });
+               
+ 
+    var layer =new L.StamenTileLayer("toner-lite");
+        
+     
+    map.addLayer(layer);     
+        
+    L.geoJson(tracts).addTo(map);
+        
+       
+function getColor(pop) {
+    return pop >= 5000 ? '#018571' :
+           pop >= 4000 ? '#80cdc1' :
+           pop >= 3000 ? '#f5f5f5' :
+           pop >= 2000 ? '#dfc27d' :
+           pop >= 1000 ? '#a6611a' :
+                      '#a6611a';
+        } 
+function style(feature) {
+    return {
+        fillColor: getColor(feature.properties.DEC_10_S_2),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    }
+}    
+        
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [1000, 2000, 3000, 4000, 5000],
+        labels = [];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        console.log("legend for "+ grades[i] + " to "+grades[i+1]+" = " +getColor(grades[i] + 1));
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }  
+
+    return div;
+};
+
+legend.addTo(map);
+        
+    </script>
+    
+</body>
+
+</html>
