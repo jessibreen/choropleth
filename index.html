@@ -92,12 +92,12 @@
     L.geoJson(tracts).addTo(map);
         
        
-function getColor(pop) {
-    return pop >= 5000 ? '#018571' :
-           pop >= 4000 ? '#80cdc1' :
-           pop >= 3000 ? '#f5f5f5' :
-           pop >= 2000 ? '#dfc27d' :
-           pop >= 1000 ? '#a6611a' :
+function getColor(DEC_10_S_2) {
+    return DEC_10_S_2 >= 5000 ? '#018571' :
+           DEC_10_S_2 >= 4000 ? '#80cdc1' :
+           DEC_10_S_2 >= 3000 ? '#f5f5f5' :
+           DEC_10_S_2 >= 2000 ? '#dfc27d' :
+           DEC_10_S_2 >= 1000 ? '#a6611a' :
                       '#a6611a';
         } 
 function style(feature) {
@@ -110,7 +110,48 @@ function style(feature) {
         fillOpacity: 0.7
     }
 }    
-        
+ 
+ function highlightFeature(e) {
+		var layer = e.target;
+
+		layer.setStyle({
+			weight: 5,
+			color: '#666',
+			dashArray: '',
+			fillOpacity: 0.7
+		});
+
+		if (!L.Browser.ie && !L.Browser.opera) {
+			layer.bringToFront();
+		}
+
+		info.update(layer.feature.properties);
+}
+
+var geojson;
+
+function resetHighlight(e) {
+    geojson.resetStyle(e.target);
+	info.update();
+}
+
+function zoomToFeature(e) {
+	map.fitBounds(e.target.getBounds());
+}
+
+function onEachFeature(feature, layer) {
+	layer.on({
+		mouseover: highlightFeature,
+		mouseout: resetHighlight,
+		click: zoomToFeature
+	});
+}
+
+		geojson = L.geoJson(tracts, {
+			style: style,
+			onEachFeature: onEachFeature
+		}).addTo(map);
+		
 var legend = L.control({position: 'bottomright'});
 
 legend.onAdd = function (map) {
